@@ -138,5 +138,21 @@ jacoco {
 }
 
 jacocoTestReport {
-    dependsOn test
+    // Integrációs tesztek fussanak le
+    dependsOn integrationTest
+    
+    // Ne csak a test.exec, hanem az integrationTest.exec fájlt is
+    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
+    
+    // reports/jacoco/test/jacocoTestReport.csv és xml is álljon elő
+    reports {
+        xml.required = true
+    }
+}
+
+sonarqube {
+    properties {
+        properties["sonar.junit.reportPaths"] += "$buildDir/test-results/integrationTest/"
+        properties["sonar.tests"] += "$projectDir/src/integration/java"
+    }
 }
