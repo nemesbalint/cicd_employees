@@ -1,0 +1,109 @@
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.springframework.boot' version '3.1.0'
+    id 'com.github.ben-manes.versions' version '0.47.0'
+    id 'com.adarshr.test-logger' version '3.2.0'
+    id 'jacoco'
+    id 'maven-publish'
+    id "com.jfrog.artifactory" version "4.32.0"
+}
+
+group = 'training'
+version = '1.0.0'
+sourceCompatibility = '17'
+
+repositories {
+    //mavenCentral()
+    //maven {
+    //    url "http://localhost:8091/repository/maven-releases/"
+    //    allowInsecureProtocol true
+    //}
+    maven {
+        url "http://localhost:8094/artifactory/libs-release"
+        allowInsecureProtocol true
+    }
+}
+
+// publishing {
+//     publications {
+//         bootJava(MavenPublication) {
+//             artifact bootJar
+//         }
+//     }
+//     repositories {
+//         maven {
+//             url = findProperty('nexusUrl') ?: 'http://localhost:8091/repository/maven-releases/'
+//             credentials {
+//                 username findProperty('nexusUsername') ?: 'admin'
+//                 password findProperty('nexusPassword') ?: 'admin'
+//             }
+//             allowInsecureProtocol true
+//         }
+//     }
+// }
+
+publishing {
+    publications {
+        bootJava(MavenPublication) {
+            artifact bootJar
+        }
+    }
+}
+
+artifactory {
+  contextUrl = findProperty('artifactoryUrl') ?: 'http://localhost:8094/artifactory'
+
+  publish {
+        repository {
+            repoKey = 'libs-release-local'
+	        username = findProperty('artifactoryUser') ?: 'admin'
+            password = findProperty('artifactoryPassword') ?: 'admin11AA'
+	    }
+	    defaults {
+            publications('bootJava')
+//            publishPom = false
+        }
+  }  
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.liquibase:liquibase-core'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    def mapstructVersion = '1.5.5.Final'
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: mapstructVersion
+    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapstructVersion
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching "*Test"
+    }
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+jacocoTestReport {
+    dependsOn test
+}
