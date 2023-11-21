@@ -22,6 +22,7 @@ public class EmployeesWebController {
 
     @GetMapping
     public ModelAndView listEmployees() {
+        log.debug("List employees");
         Map<String, Object> model = new HashMap<>();
         model.put("employees", employeesService.listEmployees());
         model.put("command", new CreateEmployeeCommand());
