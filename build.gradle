@@ -111,6 +111,10 @@ tasks.register('integrationTest', Test) {
     description = 'Runs integration tests.'
     group = 'verification'
 
+    systemProperty 'spring.datasource.url', findProperty('test.datasource.url') ?: "jdbc:h2:mem:db;DB_CLOSE_DELAY=-1"
+    systemProperty 'spring.datasource.username', findProperty('test.datasource.username') ?: "su"
+    systemProperty 'spring.datasource.password', findProperty('test.datasource.password') ?: "su"
+
     useJUnitPlatform()
 
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
