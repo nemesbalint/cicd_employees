@@ -34,6 +34,9 @@
         <test.datasource.url>jdbc:h2:mem:db;DB_CLOSE_DELAY=-1</test.datasource.url>
         <test.datasource.username>sa</test.datasource.username>
         <test.datasource.password>sa</test.datasource.password>
+        <sonar.junit.reportPaths>
+            ${project.basedir}/target/surefire-reports/,${project.basedir}/target/failsafe-reports/
+        </sonar.junit.reportPaths>
     </properties>
 
     <dependencies>
