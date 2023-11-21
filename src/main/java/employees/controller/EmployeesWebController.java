@@ -22,7 +22,7 @@ public class EmployeesWebController {
 
     @GetMapping
     public ModelAndView listEmployees() {
-        log.debug("List employees");
+        log.debug("List employees Gradle");
         Map<String, Object> model = new HashMap<>();
         model.put("employees", employeesService.listEmployees());
         model.put("command", new CreateEmployeeCommand());
